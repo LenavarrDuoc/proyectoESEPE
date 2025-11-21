@@ -1,15 +1,15 @@
 package Controlador;
 import java.util.ArrayList;
-import Modelo.Tarjetas_graficas;
+import Modelo.Tarjeta_grafica;
 public class Lista_Tarjetas_graficas {
-    private ArrayList<Tarjetas_graficas> lista = new ArrayList<>();
+    private ArrayList<Tarjeta_grafica> lista = new ArrayList<>();
     
     public Lista_Tarjetas_graficas(){
         
     }
     
-    public boolean agregarTarjetaGrafica(Tarjetas_graficas t){
-        for (Tarjetas_graficas tarjetas_graficas : lista) {
+    public boolean agregarTarjetaGrafica(Tarjeta_grafica t){
+        for (Tarjeta_grafica tarjetas_graficas : lista) {
             if(tarjetas_graficas.getCodigo()==t.getCodigo()){
                 return false;
             }
@@ -18,7 +18,7 @@ public class Lista_Tarjetas_graficas {
         return true;
     }
     //Listar
-    public ArrayList<Tarjetas_graficas> getLista() {
+    public ArrayList<Tarjeta_grafica> getLista() {
         return lista;
     }
 

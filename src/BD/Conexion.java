@@ -15,7 +15,7 @@ public class Conexion {
     private static Connection conn;
     private String user = "DUOCESEPE";
     private String pass = "DUOCESEPE";
-    private String url = "jdbc:thin:"+user+"/"+pass+"@localhost:1521:orcl";
+    private String url = "jdbc:oracle:thin:"+user+"/"+pass+"@localhost:1521:orcl";
     
     //Constr:
     public Conexion() {

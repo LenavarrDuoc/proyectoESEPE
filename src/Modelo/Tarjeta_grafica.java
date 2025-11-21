@@ -1,16 +1,16 @@
 package Modelo;
 
-public class Tarjetas_graficas {
+public class Tarjeta_grafica {
     private int codigo;
     private String nombre;
     private int cantidad;
     private char estado;
     private String marca;
 
-    public Tarjetas_graficas() {
+    public Tarjeta_grafica() {
     }
 
-    public Tarjetas_graficas(int codigo, String nombre, int cantidad, char estado, String marca) {
+    public Tarjeta_grafica(int codigo, String nombre, int cantidad, char estado, String marca) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.cantidad = cantidad;

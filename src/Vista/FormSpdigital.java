@@ -1,107 +1,116 @@
 package Vista;
 
-
-import Controlador.Lista_Tarjetas_graficas;
-import Modelo.Tarjetas_graficas;
+import Controlador.*;
+import Modelo.Tarjeta_grafica;
 import java.awt.Color;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Nicolas
  */
 public class FormSpdigital extends javax.swing.JFrame {
+
     Lista_Tarjetas_graficas lista = new Lista_Tarjetas_graficas();
+
     /**
      * Creates new form FormSpdigital
      */
     public FormSpdigital() {
         initComponents();
+        tbLista.setDefaultEditor(Object.class, null);
         cargarTabla();
         personalizarColoresTabla();
-        
+
     }
-    
+
     private void personalizarColoresTabla() {
-    Lista.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
-        @Override
-        public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int column) {
+        tbLista.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
 
-            java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-            // Obtener la marca de esa fila (columna 4 según tu tabla)
-            String marca = table.getValueAt(row, 4).toString().toLowerCase();
+                // Obtener la marca de esa fila (columna 4 según tu tabla)
+                String marca = table.getValueAt(row, 4).toString().toLowerCase();
 
-            // Color según marca
-            switch (marca) {
-                case "nvidia":
-                    c.setBackground(new Color(144, 238, 144)); // verde suave
-                    break;
-                case "radeon":
-                    c.setBackground(new Color(255, 160, 122)); // rojo claro
-                    break;
-                case "intel":
-                    c.setBackground(new Color(173, 216, 230)); // azul claro
-                    break;
-                default:
-                    c.setBackground(Color.WHITE);
-                    break;
+                // Color según marca
+                switch (marca) {
+                    case "nvidia":
+                        c.setBackground(new Color(144, 238, 144)); // verde suave
+                        break;
+                    case "amd":
+                        c.setBackground(new Color(255, 160, 122)); // rojo claro
+                        break;
+                    case "intel":
+                        c.setBackground(new Color(173, 216, 230)); // azul claro
+                        break;
+                    default:
+                        c.setBackground(Color.WHITE);
+                        break;
+                }
+
+                // Si la fila está seleccionada, mantener selección visible
+                if (isSelected) {
+                    c.setBackground(c.getBackground().darker());
+                }
+
+                return c;
             }
+        });
+    }
 
-            // Si la fila está seleccionada, mantener selección visible
-            if (isSelected) {
-                c.setBackground(c.getBackground().darker());
+    private void ComboMarcasActionPerformed(java.awt.event.ActionEvent evt) {
+        String marca = cbMarcas.getSelectedItem().toString().toLowerCase();
+
+        switch (marca) {
+            case "nvidia":
+                jPanel4.setBackground(Color.GREEN);
+                break;
+            case "radeon":
+                jLabel4.setBackground(Color.RED);
+                break;
+            case "intel":
+                jLabel4.setBackground(Color.BLUE);
+                break;
+            default:
+                jLabel4.setBackground(Color.WHITE);
+                break;
+        }
+    }
+
+    public void cargarTabla() {
+        try {
+            List<Tarjeta_grafica> listadoTarjetas = new DaoTarjetasGraficas().listarTarjetas();
+            DefaultTableModel dtm = new DefaultTableModel();
+
+            dtm.addColumn("Código");
+            dtm.addColumn("Nombre");
+            dtm.addColumn("Cantidad");
+            dtm.addColumn("Estado");
+            dtm.addColumn("Marca");
+
+            String[] filas = new String[5];
+            for (Tarjeta_grafica tarjeta_grafica : listadoTarjetas) {
+                filas[0] = String.valueOf(tarjeta_grafica.getCodigo());
+                filas[1] = String.valueOf(tarjeta_grafica.getNombre());
+                filas[2] = String.valueOf(tarjeta_grafica.getCantidad());
+                filas[3] = String.valueOf(tarjeta_grafica.getEstado());
+                filas[4] = String.valueOf(tarjeta_grafica.getMarca());
+
+                dtm.addRow(filas);
             }
+            tbLista.setModel(dtm);
 
-            return c;
+        } catch (Exception e) {
+            System.out.println("Error al cargar tabla:" + e.getMessage());
         }
-    });
-}
-    
-    
-    private void ComboMarcasActionPerformed(java.awt.event.ActionEvent evt) {                                          
-    String marca = ComboMarcas.getSelectedItem().toString().toLowerCase();
 
-    switch (marca) {
-        case "nvidia":
-            jPanel4.setBackground(Color.GREEN);
-            break;
-        case "radeon":
-            jLabel4.setBackground(Color.RED);
-            break;
-        case "intel":
-            jLabel4.setBackground(Color.BLUE);
-            break;
-        default:
-            jLabel4.setBackground(Color.WHITE);
-            break;
     }
-}
-    
-    public void cargarTabla(){
-        DefaultTableModel dtm= new DefaultTableModel();
-        
-        dtm.addColumn("Código");
-        dtm.addColumn("Nombre");
-        dtm.addColumn("Cantidad");
-        dtm.addColumn("Estado");
-        dtm.addColumn("Marca");
-        
-        String[] filas=new String[5];
-        for (Tarjetas_graficas tarjetas_graficas :lista.getLista()){
-        filas[0]=String.valueOf(tarjetas_graficas.getCodigo());
-        filas[1]=String.valueOf(tarjetas_graficas.getNombre());
-        filas[2]=String.valueOf(tarjetas_graficas.getCantidad());
-        filas[3]=String.valueOf(tarjetas_graficas.getEstado());
-        filas[4]=String.valueOf(tarjetas_graficas.getMarca());
-        
-            dtm.addRow(filas);
-        }
-        Lista.setModel(dtm);
-        
-    }
-  
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -115,21 +124,21 @@ public class FormSpdigital extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        TxtNombre = new javax.swing.JTextField();
+        tbNombre = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         BtnRegistrar = new javax.swing.JButton();
         BtnEliminar = new javax.swing.JButton();
         BtnModificar = new javax.swing.JButton();
-        SpCodigo = new javax.swing.JSpinner();
-        ButtonNuevo = new javax.swing.JRadioButton();
-        ButtonUsado = new javax.swing.JRadioButton();
-        ButtonRecondicionado = new javax.swing.JRadioButton();
-        ComboMarcas = new javax.swing.JComboBox<>();
+        spCodigo = new javax.swing.JSpinner();
+        rbNuevo = new javax.swing.JRadioButton();
+        rbUsado = new javax.swing.JRadioButton();
+        rbRecondicionado = new javax.swing.JRadioButton();
+        cbMarcas = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        Lista = new javax.swing.JTable();
-        SpCantidad = new javax.swing.JSpinner();
+        tbLista = new javax.swing.JTable();
+        spCantidad = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Formulario ingreso producto");
@@ -175,10 +184,10 @@ public class FormSpdigital extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(0, 0, 102));
         jLabel4.setText("Cantidad:");
 
-        TxtNombre.setText("Ej: RTX 3060 TI");
-        TxtNombre.addActionListener(new java.awt.event.ActionListener() {
+        tbNombre.setText("Ej: RTX 3060 TI");
+        tbNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TxtNombreActionPerformed(evt);
+                tbNombreActionPerformed(evt);
             }
         });
 
@@ -205,6 +214,7 @@ public class FormSpdigital extends javax.swing.JFrame {
         });
 
         BtnEliminar.setText("Eliminar");
+        BtnEliminar.setDefaultCapable(false);
         BtnEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnEliminarActionPerformed(evt);
@@ -212,45 +222,46 @@ public class FormSpdigital extends javax.swing.JFrame {
         });
 
         BtnModificar.setText("Modificar");
+        BtnModificar.setDefaultCapable(false);
         BtnModificar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnModificarActionPerformed(evt);
             }
         });
 
-        SpCodigo.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        spCodigo.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
-        ButtonNuevo.setBackground(new java.awt.Color(255, 255, 255));
-        btnGrupo.add(ButtonNuevo);
-        ButtonNuevo.setSelected(true);
-        ButtonNuevo.setText("Nuevo");
-        ButtonNuevo.addActionListener(new java.awt.event.ActionListener() {
+        rbNuevo.setBackground(new java.awt.Color(255, 255, 255));
+        btnGrupo.add(rbNuevo);
+        rbNuevo.setSelected(true);
+        rbNuevo.setText("Nuevo");
+        rbNuevo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButtonNuevoActionPerformed(evt);
+                rbNuevoActionPerformed(evt);
             }
         });
 
-        ButtonUsado.setBackground(new java.awt.Color(255, 255, 255));
-        btnGrupo.add(ButtonUsado);
-        ButtonUsado.setText("Usado");
-        ButtonUsado.addActionListener(new java.awt.event.ActionListener() {
+        rbUsado.setBackground(new java.awt.Color(255, 255, 255));
+        btnGrupo.add(rbUsado);
+        rbUsado.setText("Usado");
+        rbUsado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButtonUsadoActionPerformed(evt);
+                rbUsadoActionPerformed(evt);
             }
         });
 
-        ButtonRecondicionado.setBackground(new java.awt.Color(255, 255, 255));
-        btnGrupo.add(ButtonRecondicionado);
-        ButtonRecondicionado.setText("Reacondicionado");
-        ButtonRecondicionado.addActionListener(new java.awt.event.ActionListener() {
+        rbRecondicionado.setBackground(new java.awt.Color(255, 255, 255));
+        btnGrupo.add(rbRecondicionado);
+        rbRecondicionado.setText("Reacondicionado");
+        rbRecondicionado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButtonRecondicionadoActionPerformed(evt);
+                rbRecondicionadoActionPerformed(evt);
             }
         });
 
-        ComboMarcas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NO SELECCIONADO", "NVIDIA", "AMD", "INTEL" }));
+        cbMarcas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NO SELECCIONADO", "NVIDIA", "AMD", "INTEL" }));
 
-        Lista.setModel(new javax.swing.table.DefaultTableModel(
+        tbLista.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -261,9 +272,9 @@ public class FormSpdigital extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(Lista);
+        jScrollPane1.setViewportView(tbLista);
 
-        SpCantidad.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        spCantidad.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -279,25 +290,25 @@ public class FormSpdigital extends javax.swing.JFrame {
                     .addComponent(jLabel6)
                     .addComponent(jLabel7)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(ButtonNuevo)
+                        .addComponent(rbNuevo)
                         .addGap(10, 10, 10)
-                        .addComponent(ButtonUsado)
+                        .addComponent(rbUsado)
                         .addGap(10, 10, 10)
-                        .addComponent(ButtonRecondicionado))
+                        .addComponent(rbRecondicionado))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(ComboMarcas, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cbMarcas, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addComponent(BtnRegistrar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(BtnEliminar)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(BtnModificar))
-                    .addComponent(SpCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(BtnModificar)))
+                        .addGap(18, 18, 18)
+                        .addComponent(BtnEliminar))
+                    .addComponent(spCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(TxtNombre, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
-                        .addComponent(SpCodigo, javax.swing.GroupLayout.Alignment.LEADING)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
+                        .addComponent(tbNombre, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
+                        .addComponent(spCodigo, javax.swing.GroupLayout.Alignment.LEADING)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -312,26 +323,26 @@ public class FormSpdigital extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(SpCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(spCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(TxtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(tbNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(11, 11, 11)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(SpCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(spCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(4, 4, 4)
                         .addComponent(jLabel6)
                         .addGap(5, 5, 5)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(ButtonNuevo)
-                            .addComponent(ButtonUsado)
-                            .addComponent(ButtonRecondicionado))
+                            .addComponent(rbNuevo)
+                            .addComponent(rbUsado)
+                            .addComponent(rbRecondicionado))
                         .addGap(18, 18, 18)
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(ComboMarcas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbMarcas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(25, 25, 25)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(BtnRegistrar)
@@ -386,81 +397,128 @@ public class FormSpdigital extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void TxtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtNombreActionPerformed
+    private void tbNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbNombreActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_TxtNombreActionPerformed
+    }//GEN-LAST:event_tbNombreActionPerformed
 
     private void BtnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnRegistrarActionPerformed
-        int codigo =Integer.parseInt(SpCodigo.getValue().toString());
-        String nombre=TxtNombre.getText();
-        int cantidad =Integer.parseInt(SpCantidad.getValue().toString());
-        String marca=ComboMarcas.getSelectedItem().toString();
-        char estado='N';
-        if (ButtonNuevo.isSelected()) {
-            estado = 'N';
-        } else if (ButtonUsado.isSelected()) {
-            estado = 'U';
-        } else if (ButtonRecondicionado.isSelected()) {
-            estado = 'R';    
-        } else {
-        JOptionPane.showMessageDialog(this, "Debe seleccionar un estado");
-        return;
+        try {
+            int codigo = Integer.parseInt(spCodigo.getValue().toString());
+            String nombre = tbNombre.getText();
+            int cantidad = Integer.parseInt(spCantidad.getValue().toString());
+            String marca = cbMarcas.getSelectedItem().toString();
+            char estado = 'N';
+            if (rbUsado.isSelected()) {
+                estado = 'U';
+            } else if (rbRecondicionado.isSelected()) {
+                estado = 'R';
+            } else {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar un estado");
+                return;
+            }
+            //2. Validar datos
+            if (codigo <= 0) {
+                JOptionPane.showMessageDialog(this, "Código no Válido");
+                return;
+            } else if (nombre.trim().length() == 0) {
+                JOptionPane.showMessageDialog(this, "Nombre no Válido");
+                return;
+
+            } else if (cantidad <= 0) {
+                JOptionPane.showMessageDialog(this, "Debe ingresar una cantidad mayor a 0.");
+                return;
+
+            } else if (cbMarcas.getSelectedIndex() == 0) {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar una marca de tarjeta gráfica.");
+                return;
+            }
+            //3. Crear objeto
+            Tarjeta_grafica t = new Tarjeta_grafica(codigo, nombre, cantidad, estado, marca);
+
+            //4. Registrar en la colección
+            if (new DaoTarjetasGraficas().agregarTarjeta(t)) {
+                cargarTabla();
+                JOptionPane.showMessageDialog(this, "Tarjeta Registrada");
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo agregar la tarjeta al registro. Verifique datos del ítem.");
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al intentar agregar tarjeta: " + e.getMessage());
         }
-        //2. Validar datos
-        if(codigo<=0){
-            JOptionPane.showMessageDialog(this,"Código no Válido");
-            return;
-        }else if(nombre.trim().length()==0){
-            JOptionPane.showMessageDialog(this,"Nombre no Válido");
-            return;
-            
-        } else if(cantidad <= 0){
-            JOptionPane.showMessageDialog(this, "Debe ingresar una cantidad mayor a 0.");
-            return;
-        
-        } else if (ComboMarcas.getSelectedIndex() == 0){
-            JOptionPane.showMessageDialog(this, "Debe seleccionar una marca de tarjeta gráfica.");
-            return;
-        }
-        //3. Crear objeto
-        Tarjetas_graficas t=new Tarjetas_graficas(codigo, nombre, cantidad,estado,marca);
-        
-        //4. Registrar en la colección
-        if(lista.agregarTarjetaGrafica(t)){
-            cargarTabla();
-            JOptionPane.showMessageDialog(this,"Tarjeta Registrada");
-        }else{
-            JOptionPane.showMessageDialog(this,"Código Repetido");
-        }
-        
+
     }//GEN-LAST:event_BtnRegistrarActionPerformed
 
     private void BtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnEliminarActionPerformed
+        try {
+            int codigo = Integer.parseInt(spCodigo.getValue().toString());
+            if (new DaoTarjetasGraficas().eliminarTarjeta(codigo)) {
+                cargarTabla();
+                JOptionPane.showMessageDialog(this, "Tarjeta Grafica el Eliminado");
+            } else {
+                JOptionPane.showMessageDialog(this, "No se ha eliminado el ítem. Ingrese un código de ítem existente.");
+            }
 
-        int codigo =Integer.parseInt(SpCodigo.getValue().toString());
-        if(lista.eliminarTarjeta(codigo)){
-            cargarTabla();
-            JOptionPane.showMessageDialog(this,"Tarjeta Grafica el Eliminado");
-        }else{
-            JOptionPane.showMessageDialog(this,"No existe código");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al intentar eliminar el ítem: " + e.getMessage());
         }
     }//GEN-LAST:event_BtnEliminarActionPerformed
 
     private void BtnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnModificarActionPerformed
-        // TODO add your handling code here:
+        try {
+            //1. Captura de datos.
+            int codigo = Integer.parseInt(spCodigo.getValue().toString());
+            String nombre = tbNombre.getText();
+            int cantidad = Integer.parseInt(spCantidad.getValue().toString());
+            char estado = 'N';
+            if (rbUsado.isSelected()){
+                estado = 'U';
+            } else if (rbRecondicionado.isSelected()){
+                estado = 'R';
+            }
+            String marca = cbMarcas.getSelectedItem().toString();
+            
+            //2. Validación de datos capturados:
+            if (codigo <= 0) {
+                JOptionPane.showMessageDialog(this, "Código no Válido");
+                return;
+            } else if (nombre.trim().length() == 0) {
+                JOptionPane.showMessageDialog(this, "Nombre no Válido");
+                return;
+
+            } else if (cantidad <= 0) {
+                JOptionPane.showMessageDialog(this, "Debe ingresar una cantidad mayor a 0.");
+                return;
+
+            } else if (cbMarcas.getSelectedIndex() == 0) {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar una marca de tarjeta gráfica.");
+                return;
+            }
+            
+            //3. Instanciación con datos capturados:
+            Tarjeta_grafica nt = new Tarjeta_grafica(codigo, nombre, cantidad, estado, marca);
+            if (new DaoTarjetasGraficas().modificarTarjeta(nt)){
+                cargarTabla();
+                JOptionPane.showMessageDialog(this, "Se han modificado los datos del ítem exitósamente.");
+            } else {
+                JOptionPane.showMessageDialog(this, "No se han modificado los datos del ítem.\n Verifique la información y el código de ítem.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al intentar modificar datos del item: " + e.getMessage());
+        }
     }//GEN-LAST:event_BtnModificarActionPerformed
 
-    private void ButtonNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNuevoActionPerformed
+    private void rbNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbNuevoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_ButtonNuevoActionPerformed
+    }//GEN-LAST:event_rbNuevoActionPerformed
 
-    private void ButtonUsadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonUsadoActionPerformed
+    private void rbUsadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbUsadoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_ButtonUsadoActionPerformed
+    }//GEN-LAST:event_rbUsadoActionPerformed
 
-    private void ButtonRecondicionadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonRecondicionadoActionPerformed
+    private void rbRecondicionadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbRecondicionadoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_ButtonRecondicionadoActionPerformed
+    }//GEN-LAST:event_rbRecondicionadoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -501,15 +559,8 @@ public class FormSpdigital extends javax.swing.JFrame {
     private javax.swing.JButton BtnEliminar;
     private javax.swing.JButton BtnModificar;
     private javax.swing.JButton BtnRegistrar;
-    private javax.swing.JRadioButton ButtonNuevo;
-    private javax.swing.JRadioButton ButtonRecondicionado;
-    private javax.swing.JRadioButton ButtonUsado;
-    private javax.swing.JComboBox<String> ComboMarcas;
-    private javax.swing.JTable Lista;
-    private javax.swing.JSpinner SpCantidad;
-    private javax.swing.JSpinner SpCodigo;
-    private javax.swing.JTextField TxtNombre;
     private javax.swing.ButtonGroup btnGrupo;
+    private javax.swing.JComboBox<String> cbMarcas;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -522,5 +573,12 @@ public class FormSpdigital extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel jpCodigo;
+    private javax.swing.JRadioButton rbNuevo;
+    private javax.swing.JRadioButton rbRecondicionado;
+    private javax.swing.JRadioButton rbUsado;
+    private javax.swing.JSpinner spCantidad;
+    private javax.swing.JSpinner spCodigo;
+    private javax.swing.JTable tbLista;
+    private javax.swing.JTextField tbNombre;
     // End of variables declaration//GEN-END:variables
 }
