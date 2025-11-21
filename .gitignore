@@ -1,0 +1,231 @@
+# === NetBeans ===
+nbproject/private/
+nbbuild/
+dist/
+build/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# === Archivos de cache y temporales ===
+*.class
+*.log
+*.out
+*.tmp
+
+# === IDE específicos (por si abres en otros) ===
+*.iml
+.idea/
+.vscode/
+
+# === Sistema operativo ===
+.DS_Store
+Thumbs.db
+
+# === Maven o Gradle (si aplica) ===
+target/
+*.war
+*.ear
+*.jar
+!src/main/resources/
+
+# === Archivos de configuración personal ===
+*.properties# === NetBeans ===
+nbproject/private/
+nbbuild/
+dist/
+build/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# === Archivos de cache y temporales ===
+*.class
+*.log
+*.out
+*.tmp
+
+# === IDE específicos (por si abres en otros) ===
+*.iml
+.idea/
+.vscode/
+
+# === Sistema operativo ===
+.DS_Store
+Thumbs.db
+
+# === Maven o Gradle (si aplica) ===
+target/
+*.war
+*.ear
+*.jar
+!src/main/resources/
+
+# === Archivos de configuración personal ===
+*.properties
+# === NetBeans ===
+nbproject/private/
+nbbuild/
+dist/
+build/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# === Archivos de cache y temporales ===
+*.class
+*.log
+*.out
+*.tmp
+
+# === IDE específicos (por si abres en otros) ===
+*.iml
+.idea/
+.vscode/
+
+# === Sistema operativo ===
+.DS_Store
+Thumbs.db
+
+# === Maven o Gradle (si aplica) ===
+target/
+*.war
+*.ear
+*.jar
+!src/main/resources/
+
+# === Archivos de configuración personal ===
+*.properties
+# === NetBeans ===
+nbproject/private/
+nbbuild/
+dist/
+build/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# === Archivos de cache y temporales ===
+*.class
+*.log
+*.out
+*.tmp
+
+# === IDE específicos (por si abres en otros) ===
+*.iml
+.idea/
+.vscode/
+
+# === Sistema operativo ===
+.DS_Store
+Thumbs.db
+
+# === Maven o Gradle (si aplica) ===
+target/
+*.war
+*.ear
+*.jar
+!src/main/resources/
+
+# === Archivos de configuración personal ===
+*.properties
+# === NetBeans ===
+nbproject/private/
+nbbuild/
+dist/
+build/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# === Archivos de cache y temporales ===
+*.class
+*.log
+*.out
+*.tmp
+
+# === IDE específicos (por si abres en otros) ===
+*.iml
+.idea/
+.vscode/
+
+# === Sistema operativo ===
+.DS_Store
+Thumbs.db
+
+# === Maven o Gradle (si aplica) ===
+target/
+*.war
+*.ear
+*.jar
+!src/main/resources/
+
+# === Archivos de configuración personal ===
+*.properties
+# === NetBeans ===
+nbproject/private/
+nbbuild/
+dist/
+build/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# === Archivos de cache y temporales ===
+*.class
+*.log
+*.out
+*.tmp
+
+# === IDE específicos (por si abres en otros) ===
+*.iml
+.idea/
+.vscode/
+
+# === Sistema operativo ===
+.DS_Store
+Thumbs.db
+
+# === Maven o Gradle (si aplica) ===
+target/
+*.war
+*.ear
+*.jar
+!src/main/resources/
+
+# === Archivos de configuración personal ===
+*.properties
+# === NetBeans ===
+nbproject/private/
+nbbuild/
+dist/
+build/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# === Archivos de cache y temporales ===
+*.class
+*.log
+*.out
+*.tmp
+
+# === IDE específicos (por si abres en otros) ===
+*.iml
+.idea/
+.vscode/
+
+# === Sistema operativo ===
+.DS_Store
+Thumbs.db
+
+# === Maven o Gradle (si aplica) ===
+target/
+*.war
+*.ear
+*.jar
+!src/main/resources/
+
+# === Archivos de configuración personal ===
+*.properties
+
