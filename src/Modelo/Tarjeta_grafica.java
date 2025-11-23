@@ -9,7 +9,9 @@ public class Tarjeta_grafica {
 
     public Tarjeta_grafica() {
     }
-
+    public Tarjeta_grafica(String mar, int cantidad){
+    }
+            
     public Tarjeta_grafica(int codigo, String nombre, int cantidad, char estado, String marca) {
         this.codigo = codigo;
         this.nombre = nombre;

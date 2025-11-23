@@ -10,8 +10,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import BD.*;
 import Modelo.Tarjeta_grafica;
+import Vista.FormSpdigital;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -30,6 +34,7 @@ public class DaoTarjetasGraficas {
     //C.:
     public boolean agregarTarjeta(Tarjeta_grafica t) throws SQLException {
         boolean centinela = false;
+          //      JOptionPane.showConfirmDialog(null, "¿Deseaa agregar el ítem?", "Confirmación", 0); para confirmar acción. Debe generarse condición.
         try {
             this.conexion = new Conexion().getConn();
             String query = "INSERT INTO tarjeta_grafica values(?, ?, ?, ?, ?)"; //(int codigo, String nombre, int cantidad, char estado, String marca) 
@@ -42,11 +47,13 @@ public class DaoTarjetasGraficas {
 
             if (csmnt.executeUpdate() > 0) {
                 centinela = true;
-                System.out.println("Ingreso exitoso de ítem código: " + t.getCodigo() + " a BD DUOCESEPE.");
+                System.out.println("DAO Ingreso exitoso de ítem código: " + t.getCodigo() + " a BD DUOCESEPE.");
             }
 
         } catch (Exception e) {
-            System.out.println("Error al agregar ítem en BD DUOCESEPE: " + e.getMessage());
+            String errorMessage = "Error al agregar ítem en BD DUOCESEPE:\n" + e.getMessage();
+            System.out.println("DAO:" + errorMessage);
+            JOptionPane.showMessageDialog(null, errorMessage,"Error", 0);
         } finally {
             this.conexion.close();
         }
@@ -78,7 +85,9 @@ public class DaoTarjetasGraficas {
             }
             
         } catch (Exception e) {
-            System.out.println("Error al consultar datos de ítem desde BD DUOCESEPE: " + e.getMessage());
+            String errorMessage = "Error al consultar datos de ítem desde BD DUOCESEPE:\n" + e.getMessage();
+            System.out.println("DAO: "+ errorMessage);
+            JOptionPane.showMessageDialog(null, errorMessage);
         } finally {
             this.conexion.close();
         }
@@ -98,11 +107,13 @@ public class DaoTarjetasGraficas {
             csmnt.setInt(5, t.getCodigo());
             
             if (csmnt.executeUpdate() > 0){
-                System.out.println("Actualización exitosa de datos de ítem con código " + t.getCodigo() + " en BD DUOCESEPE.");
+                System.out.println("DAO Actualización exitosa de datos de ítem con código " + t.getCodigo() + " en BD DUOCESEPE.");
                 centinela = true;
             }
         } catch (Exception e) {
-            System.out.println("Error al modificar datos de ítem en BD DUOCESEPE: " + e.getMessage());
+            String errorMessage = "Error al actualizar datos de ítem en BD DUOCESEPE:\n" + e.getMessage();
+            System.out.println("DAO:" + errorMessage);
+            JOptionPane.showMessageDialog(null, errorMessage);
         } finally {
             this.conexion.close();
         }
@@ -110,6 +121,8 @@ public class DaoTarjetasGraficas {
     }
     //D.:
     public boolean eliminarTarjeta(int codigo) throws SQLException {
+     //   String[] respuesta = new String[2]; //intentaremos implementar un método que devuelva estado y mensaje de error.
+     //   respuesta[0] = "no";
         boolean centinela = false;
         try {
             this.conexion = new Conexion().getConn();
@@ -117,16 +130,49 @@ public class DaoTarjetasGraficas {
             CallableStatement csmnt = this.conexion.prepareCall(query);
             
             if (csmnt.executeUpdate() > 0){
-                System.out.println("Eliminación exitósa de ítem codigo " + codigo + " en BD.");
+                System.out.println("DAO Eliminación exitósa de ítem codigo " + codigo + " en BD.");
                 centinela = true;
+                //respuesta[0] ="si";
             }
 
         } catch (Exception e) {
-            System.out.println("Error al borrar ítem en BD: " + e.getMessage());
+            String errorMessage = "Error al borrar ítem en BD:\n" + e.getMessage();
+            System.out.println("DAO:" + errorMessage);
+            JOptionPane.showMessageDialog(null, errorMessage);
         } finally {
             this.conexion.close();
         }
         return centinela;
+    }
+    
+    public List<Tarjeta_grafica> listarStockPorMarca() throws SQLException{
+        List<Tarjeta_grafica> listado = new ArrayList<>();
+        try {
+            String marca;
+            int cantidad;
+            this.conexion = new Conexion().getConn();
+            String query = "SELECT marca, SUM(cantidad) AS CANTIDAD FROM TARJETA_GRAFICA GROUP BY marca ORDER BY marca";
+            CallableStatement csmnt = this.conexion.prepareCall(query);
+            
+            ResultSet rs = csmnt.executeQuery();
+            DefaultTableModel dtm = new DefaultTableModel();
+            dtm.addColumn("Marca");
+            dtm.addColumn("Unidades en Stock");
+            
+            while (rs.next()){
+                Tarjeta_grafica t = new Tarjeta_grafica();
+                t.setMarca(rs.getString("MARCA"));
+                t.setCantidad(rs.getInt("CANTIDAD"));
+                listado.add(t);
+
+            }
+            
+        } catch (Exception e) {
+            System.out.println("DAO Error al consultar BD para cantidad por marca:\n" + e.getMessage());
+        } finally {
+            this.conexion.close();
+        }
+        return listado;
     }
 
 }

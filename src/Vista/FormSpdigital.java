@@ -1,5 +1,6 @@
 package Vista;
 
+import BD.Conexion;
 import Controlador.*;
 import Modelo.Tarjeta_grafica;
 import java.awt.Color;
@@ -21,7 +22,9 @@ public class FormSpdigital extends javax.swing.JFrame {
     public FormSpdigital() {
         initComponents();
         tbLista.setDefaultEditor(Object.class, null);
+        tbStockPorMarca.setDefaultEditor(Object.class, null);
         cargarTabla();
+        
         personalizarColoresTabla();
 
     }
@@ -61,6 +64,50 @@ public class FormSpdigital extends javax.swing.JFrame {
                 return c;
             }
         });
+        
+        tbStockPorMarca.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+
+                java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                // Obtener la marca de esa fila (columna 4 según tu tabla)
+                String marca = table.getValueAt(row, 0).toString().toLowerCase();
+
+                // Color según marca
+                switch (marca) {
+                    case "nvidia":
+                        c.setBackground(new Color(144, 238, 144)); // verde suave
+                        break;
+                    case "amd":
+                        c.setBackground(new Color(255, 160, 122)); // rojo claro
+                        break;
+                    case "intel":
+                        c.setBackground(new Color(173, 216, 230)); // azul claro
+                        break;
+                    default:
+                        c.setBackground(Color.WHITE);
+                        break;
+                }
+
+                // Si la fila está seleccionada, mantener selección visible
+                if (isSelected) {
+                    c.setBackground(c.getBackground().darker());
+                }
+
+                return c;
+            }
+        });
+        
+    }
+    
+    public void limpiarCampos(){
+        spCodigo.setValue(0);
+        tbNombre.setText("Ej: RTX 3060 TI");
+        spCantidad.setValue(0);
+        rbNuevo.setSelected(true);
+        cbMarcas.setSelectedIndex(0);
     }
 
     private void ComboMarcasActionPerformed(java.awt.event.ActionEvent evt) {
@@ -82,11 +129,17 @@ public class FormSpdigital extends javax.swing.JFrame {
         }
     }
 
+    
     public void cargarTabla() {
         try {
+            
+            DaoTarjetasGraficas d = new DaoTarjetasGraficas();
             List<Tarjeta_grafica> listadoTarjetas = new DaoTarjetasGraficas().listarTarjetas();
+            List<Tarjeta_grafica> listadoStockPorMarca = new DaoTarjetasGraficas().listarStockPorMarca();
             DefaultTableModel dtm = new DefaultTableModel();
-
+            DefaultTableModel dtm2 = new DefaultTableModel();
+            
+            //dtm:
             dtm.addColumn("Código");
             dtm.addColumn("Nombre");
             dtm.addColumn("Cantidad");
@@ -104,11 +157,24 @@ public class FormSpdigital extends javax.swing.JFrame {
                 dtm.addRow(filas);
             }
             tbLista.setModel(dtm);
+            
+            //dtm2: para mostrar stock de tarjetas por marca en base a query "Group by".
+            dtm2.addColumn("Marca");
+            dtm2.addColumn("Stock disponible");
+            
+            String [] filasStock = new String[2];
+            for (Tarjeta_grafica tarjeta_grafica : listadoStockPorMarca) {
+                filasStock[0] = String.valueOf(tarjeta_grafica.getMarca());
+                filasStock[1] = String.valueOf(tarjeta_grafica.getCantidad());
+                dtm2.addRow(filasStock);
+            }
+            tbStockPorMarca.setModel(dtm2);
+            
 
         } catch (Exception e) {
-            System.out.println("Error al cargar tabla:" + e.getMessage());
+            System.out.println("FormSP Error al cargar tabla:" + e.getMessage());
         }
-
+        limpiarCampos();
     }
 
     @SuppressWarnings("unchecked")
@@ -139,6 +205,9 @@ public class FormSpdigital extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tbLista = new javax.swing.JTable();
         spCantidad = new javax.swing.JSpinner();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbStockPorMarca = new javax.swing.JTable();
+        jLabel8 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -188,6 +257,11 @@ public class FormSpdigital extends javax.swing.JFrame {
         jLabel4.setText("Cantidad:");
 
         tbNombre.setText("Ej: RTX 3060 TI");
+        tbNombre.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbNombreMouseClicked(evt);
+            }
+        });
         tbNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tbNombreActionPerformed(evt);
@@ -279,6 +353,29 @@ public class FormSpdigital extends javax.swing.JFrame {
 
         spCantidad.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
+        tbStockPorMarca.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(tbStockPorMarca);
+
+        jLabel8.setText("Stock disponible por marca:");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -311,8 +408,13 @@ public class FormSpdigital extends javax.swing.JFrame {
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(tbNombre, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
                         .addComponent(spCodigo, javax.swing.GroupLayout.Alignment.LEADING)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(73, 73, 73)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -320,7 +422,6 @@ public class FormSpdigital extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
@@ -332,12 +433,17 @@ public class FormSpdigital extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(tbNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(11, 11, 11)
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(4, 4, 4)
-                        .addComponent(jLabel6)
-                        .addGap(5, 5, 5)
+                        .addComponent(jLabel4))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(spCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(4, 4, 4)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel8))
+                .addGap(5, 5, 5)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(rbNuevo)
                             .addComponent(rbUsado)
@@ -346,13 +452,13 @@ public class FormSpdigital extends javax.swing.JFrame {
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cbMarcas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(25, 25, 25)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(BtnRegistrar)
                             .addComponent(BtnEliminar)
-                            .addComponent(BtnModificar))
-                        .addGap(0, 16, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(BtnModificar)))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(22, 22, 22))
         );
 
         javax.swing.GroupLayout jpCodigoLayout = new javax.swing.GroupLayout(jpCodigo);
@@ -423,9 +529,6 @@ public class FormSpdigital extends javax.swing.JFrame {
                 estado = 'U';
             } else if (rbRecondicionado.isSelected()) {
                 estado = 'R';
-            } else {
-                JOptionPane.showMessageDialog(this, "Debe seleccionar un estado");
-                return;
             }
             //2. Validar datos
             if (codigo <= 0) {
@@ -451,11 +554,11 @@ public class FormSpdigital extends javax.swing.JFrame {
                 cargarTabla();
                 JOptionPane.showMessageDialog(this, "Tarjeta Registrada");
             } else {
-                JOptionPane.showMessageDialog(this, "No se pudo agregar la tarjeta al registro. Verifique datos del ítem.");
+                JOptionPane.showMessageDialog(this, "No se pudo agregar la tarjeta al registro.\nVerifique datos del ítem.");
             }
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al intentar agregar tarjeta: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error al intentar agregar tarjeta:\n" + e.getMessage());
         }
 
     }//GEN-LAST:event_BtnRegistrarActionPerformed
@@ -465,13 +568,13 @@ public class FormSpdigital extends javax.swing.JFrame {
             int codigo = Integer.parseInt(spCodigo.getValue().toString());
             if (new DaoTarjetasGraficas().eliminarTarjeta(codigo)) {
                 cargarTabla();
-                JOptionPane.showMessageDialog(this, "Tarjeta Grafica el Eliminado");
+                JOptionPane.showMessageDialog(this, "Tarjeta Grafica eliminada");
             } else {
-                JOptionPane.showMessageDialog(this, "No se ha eliminado el ítem. Ingrese un código de ítem existente.");
+                JOptionPane.showMessageDialog(this, "No se ha eliminado el ítem.\nIngrese un código de ítem existente.");
             }
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al intentar eliminar el ítem: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error al intentar eliminar el ítem:\n" + e.getMessage());
         }
     }//GEN-LAST:event_BtnEliminarActionPerformed
 
@@ -515,7 +618,7 @@ public class FormSpdigital extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "No se han modificado los datos del ítem.\n Verifique la información y el código de ítem.");
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al intentar modificar datos del item: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error al intentar modificar datos del item:\n" + e.getMessage());
         }
     }//GEN-LAST:event_BtnModificarActionPerformed
 
@@ -530,6 +633,10 @@ public class FormSpdigital extends javax.swing.JFrame {
     private void rbRecondicionadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbRecondicionadoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_rbRecondicionadoActionPerformed
+
+    private void tbNombreMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbNombreMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tbNombreMouseClicked
 
     /**
      * @param args the command line arguments
@@ -579,6 +686,7 @@ public class FormSpdigital extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
@@ -586,6 +694,7 @@ public class FormSpdigital extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPanel jpCodigo;
     private javax.swing.JRadioButton rbNuevo;
     private javax.swing.JRadioButton rbRecondicionado;
@@ -594,5 +703,6 @@ public class FormSpdigital extends javax.swing.JFrame {
     private javax.swing.JSpinner spCodigo;
     private javax.swing.JTable tbLista;
     private javax.swing.JTextField tbNombre;
+    private javax.swing.JTable tbStockPorMarca;
     // End of variables declaration//GEN-END:variables
 }
