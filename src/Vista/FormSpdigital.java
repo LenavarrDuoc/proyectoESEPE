@@ -26,8 +26,39 @@ public class FormSpdigital extends javax.swing.JFrame {
         cargarTabla();
         
         personalizarColoresTabla();
+        tbLista.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e){
+                int fila = tbLista.getSelectedRow(); //variable toma la posición de la fila seleccionada desde la tabla.
+                int filasSelec = tbLista.getSelectedRowCount(); //Variable toma la cantidad de filas seleccionadas desde la tabla.
+                
+                if (filasSelec != 1){
+                    limpiarCampos(); //Si tiene más de 1 fila seleccionadas a la vez, limpia la tabla.
+                } else if (fila != -1 ){
+                    cargarDatosdeFila(fila);    //Si tiene solo una fila válida seleccionada, carga los datos de la fila a los campos de edición.
+                }
+            }
+        });
 
+        
     }
+    public void cargarDatosdeFila(int fila){
+            int codigo = Integer.parseInt(tbLista.getValueAt(fila, 0).toString());
+            int cantidad = Integer.parseInt(tbLista.getValueAt(fila, 2).toString());
+            spCodigo.setValue(codigo);
+            tbNombre.setText(tbLista.getValueAt(fila, 1).toString());
+            spCantidad.setValue(cantidad);
+            cbMarcas.setSelectedItem(tbLista.getValueAt(fila, 4).toString());
+            
+            String estado = tbLista.getValueAt(fila, 3).toString();
+            if (estado.equalsIgnoreCase("n")){
+                rbNuevo.setSelected(true);
+            } else  if(estado.equalsIgnoreCase("u")){
+                rbUsado.setSelected(true);
+            } else  if(estado.equalsIgnoreCase("r")){
+                rbRecondicionado.setSelected(true);
+            }
+        }
 
     private void personalizarColoresTabla() {
         tbLista.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
