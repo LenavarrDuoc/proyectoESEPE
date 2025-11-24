@@ -5,6 +5,7 @@
  */
 package Vista;
 
+import Controlador.DaoTarjetasGraficas;
 import javax.swing.JOptionPane;
 
 /**
@@ -38,7 +39,7 @@ public class FormLogin extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         TxtNombre = new javax.swing.JTextField();
         TxtPassword = new javax.swing.JPasswordField();
-        jButton1 = new javax.swing.JButton();
+        btnIngresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Inicio de sesión");
@@ -84,12 +85,18 @@ public class FormLogin extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(0, 0, 102));
         jLabel4.setText("Contraseña:");
 
-        jButton1.setBackground(new java.awt.Color(102, 0, 102));
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Ingresar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        TxtPassword.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                TxtPasswordKeyPressed(evt);
+            }
+        });
+
+        btnIngresar.setBackground(new java.awt.Color(102, 0, 102));
+        btnIngresar.setForeground(new java.awt.Color(255, 255, 255));
+        btnIngresar.setText("Ingresar");
+        btnIngresar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnIngresarActionPerformed(evt);
             }
         });
 
@@ -116,7 +123,7 @@ public class FormLogin extends javax.swing.JFrame {
                                 .addComponent(TxtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(144, 144, 144)
-                        .addComponent(jButton1)))
+                        .addComponent(btnIngresar)))
                 .addContainerGap(73, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -133,7 +140,7 @@ public class FormLogin extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(TxtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(btnIngresar)
                 .addGap(48, 48, 48))
         );
 
@@ -171,19 +178,33 @@ public class FormLogin extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-         String usuario=TxtNombre.getText();
-        String password=TxtPassword.getText();
+    private void btnIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarActionPerformed
+        String user = TxtNombre.getText().trim();
+        String pass = TxtPassword.getText().trim();
+        
+        DaoTarjetasGraficas d = new DaoTarjetasGraficas();
         
         //2 Validar Credencial
-        if(usuario.equals("admin")&& password.equals("admin25")){
-            //abrir la nueva ventana 
-            new FormSpdigital().setVisible(true);
-            this.setVisible(false);
-        }else{
-            JOptionPane.showMessageDialog(this,"Nombre o Contraseña incorrecta","Error de credenciales",JOptionPane.ERROR_MESSAGE);
+        try {
+            if (user.trim().length() == 0 || pass.trim().length() == 0){
+            JOptionPane.showMessageDialog(this, "Debe ingresar usuario y contraseña.", "Error de credenciales", JOptionPane.ERROR_MESSAGE);
+                
+            }else if (d.verificarCredenciales(user, pass)) {
+                //abrir la nueva ventana 
+                new FormSpdigital().setVisible(true);
+                this.setVisible(false);
+            }else {
+            JOptionPane.showMessageDialog(this, "Nombre o Contraseña incorrecta", "Error de credenciales", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+            
+        } catch (Exception e) {
+            System.out.println("Error en función de validación de LogIn: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnIngresarActionPerformed
+
+    private void TxtPasswordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TxtPasswordKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TxtPasswordKeyPressed
 
     /**
      * @param args the command line arguments
@@ -223,7 +244,7 @@ public class FormLogin extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField TxtNombre;
     private javax.swing.JPasswordField TxtPassword;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnIngresar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
