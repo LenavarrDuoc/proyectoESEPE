@@ -23,6 +23,8 @@ public class FormSpdigital extends javax.swing.JFrame {
         initComponents();
         tbLista.setDefaultEditor(Object.class, null);
         tbStockPorMarca.setDefaultEditor(Object.class, null);
+        BtnEliminar.setEnabled(false);
+        lbSeleccionTabla1.setVisible(false);
         cargarTabla();
         
         personalizarColoresTabla();
@@ -34,8 +36,10 @@ public class FormSpdigital extends javax.swing.JFrame {
                 
                 if (filasSelec != 1){
                     limpiarCampos(); //Si tiene más de 1 fila seleccionadas a la vez, limpia la tabla.
+                    BtnEliminar.setEnabled(false);
                 } else if (fila != -1 ){
                     cargarDatosdeFila(fila);    //Si tiene solo una fila válida seleccionada, carga los datos de la fila a los campos de edición.
+                    BtnEliminar.setEnabled(true);
                 }
             }
         });
@@ -200,7 +204,11 @@ public class FormSpdigital extends javax.swing.JFrame {
                 dtm2.addRow(filasStock);
             }
             tbStockPorMarca.setModel(dtm2);
-            
+            if (listadoTarjetas.size() > 0){
+                lbSeleccionTabla1.setVisible(true);
+            } else {
+                lbSeleccionTabla1.setVisible(false);
+            }
 
         } catch (Exception e) {
             System.out.println("FormSP Error al cargar tabla:" + e.getMessage());
@@ -240,8 +248,12 @@ public class FormSpdigital extends javax.swing.JFrame {
         tbStockPorMarca = new javax.swing.JTable();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        BtnSalir = new javax.swing.JButton();
+        lbSeleccionTabla1 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -410,6 +422,16 @@ public class FormSpdigital extends javax.swing.JFrame {
 
         jLabel9.setText("Registro de stock:");
 
+        BtnSalir.setText("Salir");
+        BtnSalir.setDefaultCapable(false);
+        BtnSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnSalirActionPerformed(evt);
+            }
+        });
+
+        lbSeleccionTabla1.setText("(seleccione un artículo del menú para su modificación/eliminación)");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -449,7 +471,9 @@ public class FormSpdigital extends javax.swing.JFrame {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(BtnSalir)
+                            .addComponent(lbSeleccionTabla1, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -457,7 +481,7 @@ public class FormSpdigital extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
@@ -469,15 +493,16 @@ public class FormSpdigital extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(tbNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(11, 11, 11)
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(4, 4, 4))
+                        .addComponent(jLabel4))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(spCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbSeleccionTabla1))
+                .addGap(4, 4, 4)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(jLabel8))
@@ -491,13 +516,14 @@ public class FormSpdigital extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cbMarcas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(BtnRegistrar)
-                            .addComponent(BtnEliminar)
-                            .addComponent(BtnModificar)))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addComponent(cbMarcas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BtnRegistrar)
+                    .addComponent(BtnEliminar)
+                    .addComponent(BtnModificar)
+                    .addComponent(BtnSalir))
                 .addGap(22, 22, 22))
         );
 
@@ -531,7 +557,21 @@ public class FormSpdigital extends javax.swing.JFrame {
             .addComponent(jpCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jMenu1.setText("Agregar usuario");
+        jMenu1.setText("Gestión de inventario");
+
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        jMenuItem1.setText("Gestión de marcas");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
+        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        jMenuItem2.setText("Gestión de usuarios");
+        jMenu1.add(jMenuItem2);
+
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Acerca de nosotros");
@@ -678,6 +718,14 @@ public class FormSpdigital extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tbNombreMouseClicked
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void BtnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSalirActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_BtnSalirActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -717,6 +765,7 @@ public class FormSpdigital extends javax.swing.JFrame {
     private javax.swing.JButton BtnEliminar;
     private javax.swing.JButton BtnModificar;
     private javax.swing.JButton BtnRegistrar;
+    private javax.swing.JButton BtnSalir;
     private javax.swing.ButtonGroup btnGrupo;
     private javax.swing.JComboBox<String> cbMarcas;
     private javax.swing.JLabel jLabel1;
@@ -731,12 +780,15 @@ public class FormSpdigital extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPanel jpCodigo;
+    private javax.swing.JLabel lbSeleccionTabla1;
     private javax.swing.JRadioButton rbNuevo;
     private javax.swing.JRadioButton rbRecondicionado;
     private javax.swing.JRadioButton rbUsado;

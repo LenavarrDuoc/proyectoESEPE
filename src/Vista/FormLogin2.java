@@ -12,12 +12,12 @@ import javax.swing.JOptionPane;
  *
  * @author Nicolas
  */
-public class FormLogin extends javax.swing.JFrame {
+public class FormLogIn2 extends javax.swing.JFrame {
 
     /**
      * Creates new form FormLogin
      */
-    public FormLogin() {
+    public FormLogIn2() {
         initComponents();
     }
 
@@ -190,7 +190,8 @@ public class FormLogin extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Debe ingresar usuario y contraseña.", "Error de credenciales", JOptionPane.ERROR_MESSAGE);
                 
             }else if (d.verificarCredenciales(user, pass)) {
-                //abrir la nueva ventana 
+                //abrir la nueva ventana
+                
                 new FormSpdigital().setVisible(true);
                 this.setVisible(false);
             }else {
@@ -223,20 +224,23 @@ public class FormLogin extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FormLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormLogIn2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FormLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormLogIn2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FormLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormLogIn2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FormLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormLogIn2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FormLogin().setVisible(true);
+                new FormLogIn2().setVisible(true);
             }
         });
     }

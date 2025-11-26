@@ -36,7 +36,7 @@ public class DaoTarjetasGraficas {
         boolean centinela = false;
           //      JOptionPane.showConfirmDialog(null, "¿Deseaa agregar el ítem?", "Confirmación", 0); para confirmar acción. Debe generarse condición.
         try {
-            this.conexion = new Conexion().getConn();
+            this.conexion = new ConexionCloud().getConn();
             String query = "INSERT INTO tarjeta_grafica values(?, ?, ?, ?, ?)"; //(int codigo, String nombre, int cantidad, char estado, String marca) 
             CallableStatement csmnt = this.conexion.prepareCall(query);
             csmnt.setInt(1, t.getCodigo());
@@ -66,7 +66,7 @@ public class DaoTarjetasGraficas {
         List<Tarjeta_grafica> listado = new ArrayList<>();
         
         try {
-            this.conexion = new Conexion().getConn();
+            this.conexion = new ConexionCloud().getConn();
             String query = "SELECT * FROM tarjeta_grafica ORDER BY codigo asc";
             CallableStatement csmnt = this.conexion.prepareCall(query);
             
@@ -97,7 +97,7 @@ public class DaoTarjetasGraficas {
     public boolean verificarCredenciales(String user, String pass) throws SQLException{
         boolean centinela = false;
         try {
-            this.conexion = new Conexion().getConn();
+            this.conexion = new ConexionCloud().getConn();
             String query = "SELECT COUNT(*) AS total FROM usuario WHERE user_name = ? AND pass = ?";
             CallableStatement csmnt = this.conexion.prepareCall(query);
             csmnt.setString(1, user.toLowerCase());
@@ -109,9 +109,11 @@ public class DaoTarjetasGraficas {
                 int resultado = rs.getInt("TOTAL");
                 if (resultado == 1) {
                     centinela = true;
-                
+
                 }
+                
             }
+            
             
         } catch (Exception e) {
             System.out.println("Error en verificación en BD de credenciales de LogIn: " + e.getMessage());
@@ -125,7 +127,7 @@ public class DaoTarjetasGraficas {
     public boolean modificarTarjeta(Tarjeta_grafica t) throws SQLException{
         boolean centinela = false;
         try {
-            this.conexion = new Conexion().getConn();
+            this.conexion = new ConexionCloud().getConn();
             String query = "UPDATE tarjeta_grafica SET nombre = ?, cantidad = ?, estado = ?, marca = ? WHERE codigo = ?";
             CallableStatement csmnt = this.conexion.prepareCall(query);
             csmnt.setString(1, t.getNombre());
@@ -153,7 +155,7 @@ public class DaoTarjetasGraficas {
      //   respuesta[0] = "no";
         boolean centinela = false;
         try {
-            this.conexion = new Conexion().getConn();
+            this.conexion = new ConexionCloud().getConn();
             String query = "DELETE FROM TARJETA_GRAFICA WHERE CODIGO = " + codigo;
             CallableStatement csmnt = this.conexion.prepareCall(query);
             
@@ -178,7 +180,7 @@ public class DaoTarjetasGraficas {
         try {
             String marca;
             int cantidad;
-            this.conexion = new Conexion().getConn();
+            this.conexion = new ConexionCloud().getConn();
             String query = "SELECT marca, SUM(cantidad) AS CANTIDAD FROM TARJETA_GRAFICA GROUP BY marca ORDER BY marca";
             CallableStatement csmnt = this.conexion.prepareCall(query);
             
