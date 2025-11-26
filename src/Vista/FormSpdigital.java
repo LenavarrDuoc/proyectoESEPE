@@ -4,9 +4,11 @@ import BD.Conexion;
 import Controlador.*;
 import Modelo.Tarjeta_grafica;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import java.net.URI;
 
 /**
  *
@@ -559,8 +561,8 @@ public class FormSpdigital extends javax.swing.JFrame {
 
         jMenu1.setText("Gestión de inventario");
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.ALT_DOWN_MASK));
-        jMenuItem1.setText("Gestión de marcas");
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        jMenuItem1.setText("Reporte de inventario");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -719,7 +721,14 @@ public class FormSpdigital extends javax.swing.JFrame {
     }//GEN-LAST:event_tbNombreMouseClicked
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
+            try {
+                URI url = new URI("https://gf49070c6f93cf2-esepecloud.adb.sa-santiago-1.oraclecloudapps.com/ords/r/esepecloud/reporte-de-inventario-tarjetas-gr%C3%A1ficas-esepe102/home?session=207944374841238");
+                Desktop.getDesktop().browse(url);
+        } catch (Exception e) {
+                String errorMessage = "Error al abrir la url del registro de inventario: " + e.getMessage();
+                System.out.println(errorMessage);
+                JOptionPane.showMessageDialog(this, errorMessage);
+        }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void BtnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSalirActionPerformed
