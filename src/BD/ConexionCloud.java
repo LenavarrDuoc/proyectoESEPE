@@ -5,6 +5,9 @@ oracle.jdbc.OracleDriver
  */
 package BD;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
@@ -23,8 +26,41 @@ public class ConexionCloud {
     //Constr:
     public ConexionCloud() {
         try {
-            String rutaWallet = (System.getProperty("user.dir") + "/Wallet").replace("\\", "/");
-            String url = "jdbc:oracle:thin:@"+ service;
+            // Crear carpeta temporal
+            File tempDir = new File(System.getProperty("java.io.tmpdir"), "wallet");
+            tempDir.mkdirs();
+
+// Copiar todos los archivos de la carpeta Wallet del proyecto
+            String[] archivos = {
+                "cwallet.sso",
+                "ewallet.p12",
+                "ewallet.pem",
+                "keystore.jks",
+                "ojdbc.properties",
+                "sqlnet.ora",
+                "tnsnames.ora",
+                "truststore.jks"
+            };
+
+            for (String archivo : archivos) {
+                try (InputStream in = ConexionCloud.class.getResourceAsStream("/BD/Wallet/" + archivo)) {
+                    if (in == null) {
+                        throw new RuntimeException("No se encontró el archivo en el jar: " + archivo);
+                    }
+
+                    File outFile = new File(tempDir, archivo);
+
+                    try (FileOutputStream out = new FileOutputStream(outFile)) {
+                        in.transferTo(out);
+                    }
+                }
+            }
+
+// Ruta final que debes usar como TNS_ADMIN
+            String rutaWallet = tempDir.getAbsolutePath().replace("\\", "/");
+            System.out.println("Ruta wallet extraída: " + rutaWallet);
+
+            String url = "jdbc:oracle:thin:@" + service;
             Properties prop = new Properties();
             prop.setProperty("user", user);
             prop.setProperty("password", pass);

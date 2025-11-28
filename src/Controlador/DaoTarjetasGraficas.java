@@ -94,6 +94,36 @@ public class DaoTarjetasGraficas {
         return listado;
     }
     
+    public List<Tarjeta_grafica> listarStockPorMarca() throws SQLException{
+        List<Tarjeta_grafica> listado = new ArrayList<>();
+        try {
+            String marca;
+            int cantidad;
+            this.conexion = new ConexionCloud().getConn();
+            String query = "SELECT marca, SUM(cantidad) AS CANTIDAD FROM TARJETA_GRAFICA GROUP BY marca ORDER BY marca";
+            CallableStatement csmnt = this.conexion.prepareCall(query);
+            
+            ResultSet rs = csmnt.executeQuery();
+            DefaultTableModel dtm = new DefaultTableModel();
+            dtm.addColumn("Marca");
+            dtm.addColumn("Unidades en Stock");
+            
+            while (rs.next()){
+                Tarjeta_grafica t = new Tarjeta_grafica();
+                t.setMarca(rs.getString("MARCA"));
+                t.setCantidad(rs.getInt("CANTIDAD"));
+                listado.add(t);
+
+            }
+            
+        } catch (Exception e) {
+            System.out.println("DAO Error al consultar BD para cantidad por marca:\n" + e.getMessage());
+        } finally {
+            this.conexion.close();
+        }
+        return listado;
+    }
+    
     public boolean verificarCredenciales(String user, String pass) throws SQLException{
         boolean centinela = false;
         try {
@@ -175,34 +205,6 @@ public class DaoTarjetasGraficas {
         return centinela;
     }
     
-    public List<Tarjeta_grafica> listarStockPorMarca() throws SQLException{
-        List<Tarjeta_grafica> listado = new ArrayList<>();
-        try {
-            String marca;
-            int cantidad;
-            this.conexion = new ConexionCloud().getConn();
-            String query = "SELECT marca, SUM(cantidad) AS CANTIDAD FROM TARJETA_GRAFICA GROUP BY marca ORDER BY marca";
-            CallableStatement csmnt = this.conexion.prepareCall(query);
-            
-            ResultSet rs = csmnt.executeQuery();
-            DefaultTableModel dtm = new DefaultTableModel();
-            dtm.addColumn("Marca");
-            dtm.addColumn("Unidades en Stock");
-            
-            while (rs.next()){
-                Tarjeta_grafica t = new Tarjeta_grafica();
-                t.setMarca(rs.getString("MARCA"));
-                t.setCantidad(rs.getInt("CANTIDAD"));
-                listado.add(t);
-
-            }
-            
-        } catch (Exception e) {
-            System.out.println("DAO Error al consultar BD para cantidad por marca:\n" + e.getMessage());
-        } finally {
-            this.conexion.close();
-        }
-        return listado;
-    }
+    
 
 }

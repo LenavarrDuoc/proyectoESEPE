@@ -602,6 +602,7 @@ public class FormSpdigital extends javax.swing.JFrame {
 
     private void BtnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnRegistrarActionPerformed
         try {
+            //Capturar:
             int codigo = Integer.parseInt(spCodigo.getValue().toString());
             String nombre = tbNombre.getText();
             int cantidad = Integer.parseInt(spCantidad.getValue().toString());
