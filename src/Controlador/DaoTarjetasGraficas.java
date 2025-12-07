@@ -104,10 +104,10 @@ public class DaoTarjetasGraficas {
             CallableStatement csmnt = this.conexion.prepareCall(query);
             
             ResultSet rs = csmnt.executeQuery();
-            DefaultTableModel dtm = new DefaultTableModel();
-            dtm.addColumn("Marca");
-            dtm.addColumn("Unidades en Stock");
-            
+//            DefaultTableModel dtm = new DefaultTableModel();
+//            dtm.addColumn("Marca");
+//            dtm.addColumn("Unidades en Stock");
+//            
             while (rs.next()){
                 Tarjeta_grafica t = new Tarjeta_grafica();
                 t.setMarca(rs.getString("MARCA"));
@@ -118,6 +118,7 @@ public class DaoTarjetasGraficas {
             
         } catch (Exception e) {
             System.out.println("DAO Error al consultar BD para cantidad por marca:\n" + e.getMessage());
+            
         } finally {
             this.conexion.close();
         }

@@ -3,12 +3,15 @@ package Vista;
 import BD.Conexion;
 import Controlador.*;
 import Modelo.Tarjeta_grafica;
+import Modelo.Usuario;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.net.URI;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -16,13 +19,24 @@ import java.net.URI;
  */
 public class FormSpdigital extends javax.swing.JFrame {
 
-    Lista_Tarjetas_graficas lista = new Lista_Tarjetas_graficas();
+   private Lista_Tarjetas_graficas lista = new Lista_Tarjetas_graficas();
+   private Usuario usuarioLogIn;
+   
+   
+   
 
     /**
      * Creates new form FormSpdigital
+     * @param usuarioLogIn
      */
+   
     public FormSpdigital() {
+    }
+
+    public FormSpdigital(Usuario usuarioLogIn) {
+        this.usuarioLogIn = usuarioLogIn;
         initComponents();
+        setOpcionesRol();
         tbLista.setDefaultEditor(Object.class, null);
         tbStockPorMarca.setDefaultEditor(Object.class, null);
         BtnEliminar.setEnabled(false);
@@ -38,16 +52,36 @@ public class FormSpdigital extends javax.swing.JFrame {
                 
                 if (filasSelec != 1){
                     limpiarCampos(); //Si tiene más de 1 fila seleccionadas a la vez, limpia la tabla.
-                    BtnEliminar.setEnabled(false);
+                    
                 } else if (fila != -1 ){
                     cargarDatosdeFila(fila);    //Si tiene solo una fila válida seleccionada, carga los datos de la fila a los campos de edición.
-                    BtnEliminar.setEnabled(true);
+                    
                 }
             }
         });
-
-        
     }
+    
+    public void setOpcionesRol(){ //Según el rol de usuario obtenido desde la BD en el LogIn, se habilitan o deshabilitan diferentes funciones.
+        if (usuarioLogIn.getRol().equalsIgnoreCase("inventario")){
+            MiGestionUsuarios.setEnabled(false);
+            
+        } else if(usuarioLogIn.getRol().equalsIgnoreCase("reporte")){
+            MiGestionUsuarios.setEnabled(false);
+            BtnRegistrar.setEnabled(false);
+            BtnModificar.setEnabled(false);
+            BtnEliminar.setEnabled(false);
+            rbNuevo.setEnabled(false);
+            rbRecondicionado.setEnabled(false);
+            rbUsado.setEnabled(false);
+            spCodigo.setEnabled(false);
+            spCantidad.setEnabled(false);
+            tbNombre.setEnabled(false);
+            cbMarcas.setEnabled(false);
+        }
+        LbUsuario.setText("Usuario: " + usuarioLogIn.getNombre());
+        LbRol.setText("Rol: " + usuarioLogIn.getRol());
+    }
+    
     public void cargarDatosdeFila(int fila){
             int codigo = Integer.parseInt(tbLista.getValueAt(fila, 0).toString());
             int cantidad = Integer.parseInt(tbLista.getValueAt(fila, 2).toString());
@@ -227,6 +261,9 @@ public class FormSpdigital extends javax.swing.JFrame {
         jpCodigo = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        LbUsuario = new javax.swing.JLabel();
+        LbRol = new javax.swing.JLabel();
+        BtnCerrarSesion = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -254,9 +291,9 @@ public class FormSpdigital extends javax.swing.JFrame {
         lbSeleccionTabla1 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        MiReporteInventario = new javax.swing.JMenuItem();
+        MiGestionUsuarios = new javax.swing.JMenuItem();
+        MbAboutUs = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Formulario ingreso producto");
@@ -270,6 +307,19 @@ public class FormSpdigital extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("SPDigital");
 
+        LbUsuario.setForeground(new java.awt.Color(255, 204, 0));
+        LbUsuario.setText("jLabel11");
+
+        LbRol.setForeground(new java.awt.Color(255, 204, 0));
+        LbRol.setText("jLabel11");
+
+        BtnCerrarSesion.setText("Cerrar sesión");
+        BtnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnCerrarSesionActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -277,14 +327,24 @@ public class FormSpdigital extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
+                .addGap(294, 294, 294)
+                .addComponent(LbUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LbRol, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BtnCerrarSesion)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(LbUsuario)
+                    .addComponent(LbRol)
+                    .addComponent(BtnCerrarSesion))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         jLabel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -520,7 +580,7 @@ public class FormSpdigital extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cbMarcas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BtnRegistrar)
                     .addComponent(BtnEliminar)
@@ -561,23 +621,38 @@ public class FormSpdigital extends javax.swing.JFrame {
 
         jMenu1.setText("Gestión de inventario");
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_DOWN_MASK));
-        jMenuItem1.setText("Reporte de inventario");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        MiReporteInventario.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        MiReporteInventario.setText("Reporte de inventario");
+        MiReporteInventario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                MiReporteInventarioActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        jMenu1.add(MiReporteInventario);
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.ALT_DOWN_MASK));
-        jMenuItem2.setText("Gestión de usuarios");
-        jMenu1.add(jMenuItem2);
+        MiGestionUsuarios.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        MiGestionUsuarios.setText("Gestión de usuarios");
+        MiGestionUsuarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MiGestionUsuariosActionPerformed(evt);
+            }
+        });
+        jMenu1.add(MiGestionUsuarios);
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Acerca de nosotros");
-        jMenuBar1.add(jMenu2);
+        MbAboutUs.setText("Acerca de nosotros");
+        MbAboutUs.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MbAboutUsMouseClicked(evt);
+            }
+        });
+        MbAboutUs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MbAboutUsActionPerformed(evt);
+            }
+        });
+        jMenuBar1.add(MbAboutUs);
 
         setJMenuBar(jMenuBar1);
 
@@ -721,7 +796,7 @@ public class FormSpdigital extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tbNombreMouseClicked
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void MiReporteInventarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MiReporteInventarioActionPerformed
             try {
                 URI url = new URI("https://gf49070c6f93cf2-esepecloud.adb.sa-santiago-1.oraclecloudapps.com/ords/r/esepecloud/reporte-de-inventario-tarjetas-gr%C3%A1ficas-esepe102/home?session=207944374841238");
                 Desktop.getDesktop().browse(url);
@@ -730,11 +805,33 @@ public class FormSpdigital extends javax.swing.JFrame {
                 System.out.println(errorMessage);
                 JOptionPane.showMessageDialog(this, errorMessage);
         }
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_MiReporteInventarioActionPerformed
 
     private void BtnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSalirActionPerformed
         System.exit(0);
     }//GEN-LAST:event_BtnSalirActionPerformed
+
+    private void BtnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCerrarSesionActionPerformed
+        
+        FormLogIn fl = new FormLogIn();
+        fl.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_BtnCerrarSesionActionPerformed
+    
+    private void MiGestionUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MiGestionUsuariosActionPerformed
+        FormGestionUsuarios fgu = new FormGestionUsuarios();
+        fgu.setVisible(true);
+    }//GEN-LAST:event_MiGestionUsuariosActionPerformed
+
+    private void MbAboutUsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MbAboutUsActionPerformed
+        
+    }//GEN-LAST:event_MbAboutUsActionPerformed
+
+    private void MbAboutUsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MbAboutUsMouseClicked
+        ImageIcon esepeIcon = new ImageIcon(getClass().getResource("/Img/channels4_profile_65x65.png"));
+        JOptionPane.showMessageDialog(this, "\tEsePe Digital S.A.\nCasa matríz:\nAv. Concha y Toro 1340\n Puente Alto, R.M., Chile", "Acerca de Nosotros", JOptionPane.INFORMATION_MESSAGE, esepeIcon);
+        
+    }//GEN-LAST:event_MbAboutUsMouseClicked
 
     /**
      * @param args the command line arguments
@@ -772,10 +869,16 @@ public class FormSpdigital extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BtnCerrarSesion;
     private javax.swing.JButton BtnEliminar;
     private javax.swing.JButton BtnModificar;
     private javax.swing.JButton BtnRegistrar;
     private javax.swing.JButton BtnSalir;
+    private javax.swing.JLabel LbRol;
+    private javax.swing.JLabel LbUsuario;
+    private javax.swing.JMenu MbAboutUs;
+    private javax.swing.JMenuItem MiGestionUsuarios;
+    private javax.swing.JMenuItem MiReporteInventario;
     private javax.swing.ButtonGroup btnGrupo;
     private javax.swing.JComboBox<String> cbMarcas;
     private javax.swing.JLabel jLabel1;
@@ -788,10 +891,7 @@ public class FormSpdigital extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;

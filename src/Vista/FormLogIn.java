@@ -4,7 +4,10 @@
  */
 package Vista;
 
+import Controlador.DaoRegistroUsuarios;
 import Controlador.DaoTarjetasGraficas;
+import Modelo.Usuario;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 /**
@@ -12,7 +15,7 @@ import javax.swing.JOptionPane;
  * @author Leo_b
  */
 public class FormLogIn extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormLogIn.class.getName());
 
     /**
@@ -135,24 +138,34 @@ public class FormLogIn extends javax.swing.JFrame {
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
         String user = tfUsuario.getText();
         String pass = pfClaveUsuario.getText();
-        DaoTarjetasGraficas d = new DaoTarjetasGraficas();
-        
-        //2 Validar Credencial
-        try {
-            if (user.trim().length() == 0 || pass.trim().length() == 0){
+        DaoRegistroUsuarios dru = new DaoRegistroUsuarios();
+
+        //2 Validar Campos:
+        if (user.trim().length() == 0 || pass.trim().length() == 0) {
             JOptionPane.showMessageDialog(this, "Debe ingresar usuario y contraseña.", "Error de credenciales", JOptionPane.ERROR_MESSAGE);
-                
-            }else if (d.verificarCredenciales(user, pass)) {
+        } else
+        //Conexión y validación de credenciales de usuario:
+        try {
+            btnEntrar.setEnabled(false);
+            btnEntrar.setText("verificando");
+
+            if (dru.verificarCredenciales(user, pass)) {
                 //abrir la nueva ventana
-                
-                new FormSpdigital().setVisible(true);
-                this.setVisible(false);
-            }else {
-            JOptionPane.showMessageDialog(this, "Nombre o Contraseña incorrecta", "Error de credenciales", JOptionPane.ERROR_MESSAGE);
-        }
-            
+                Usuario u = dru.getUsuarioLogIn();
+                new FormSpdigital(u).setVisible(true);
+                this.dispose();
+            } else {
+                btnEntrar.setEnabled(true);
+                btnEntrar.setText("Entrar");
+                JOptionPane.showMessageDialog(this, "Nombre o Contraseña incorrecta", "Error de credenciales", JOptionPane.ERROR_MESSAGE);
+            }
+
         } catch (Exception e) {
-            System.out.println("Error en función de validación de LogIn: " + e.getMessage());
+            String errorMessage = "Error en función de validación de LogIn:\n" + e.getMessage();
+            System.out.println(errorMessage);
+            btnEntrar.setEnabled(true);
+            btnEntrar.setText("Entrar");
+            JOptionPane.showMessageDialog(this, errorMessage, "Error al validar credenciales", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnEntrarActionPerformed
 

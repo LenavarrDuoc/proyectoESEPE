@@ -1,0 +1,21 @@
+<project name="uber" default="fat-jar" basedir=".">
+    
+    <target name="fat-jar">
+        
+        <mkdir dir="dist/libs"/>
+
+        <jar destfile="dist/libs/Sp_digital-fat.jar" filesetmanifest="mergewithoutmain">
+
+            <manifest>
+                <attribute name="Main-Class" value="sp_digital.Sp_digital"/>
+            </manifest>
+
+            <fileset dir="build/classes"/>
+
+            <zipgroupfileset dir="dist/lib" includes="*.jar"/>
+
+        </jar>
+
+    </target>
+
+</project>
