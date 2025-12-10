@@ -574,7 +574,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="lbSeleccionTabla1">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="(seleccione un art&#xed;culo del men&#xfa; para su modificaci&#xf3;n/eliminaci&#xf3;n)"/>
+                    <Property name="text" type="java.lang.String" value="(seleccione un art&#xed;culo del men&#xfa; para modificar o eliminar)"/>
                   </Properties>
                 </Component>
               </SubComponents>

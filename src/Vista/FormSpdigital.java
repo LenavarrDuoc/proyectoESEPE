@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.net.URI;
+import java.util.ArrayList;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 
@@ -19,6 +20,7 @@ import javax.swing.ImageIcon;
  */
 public class FormSpdigital extends javax.swing.JFrame {
 
+   private static List<FormSpdigital> instancias = new ArrayList<>();
    private Lista_Tarjetas_graficas lista = new Lista_Tarjetas_graficas();
    private Usuario usuarioLogIn;
    
@@ -34,6 +36,7 @@ public class FormSpdigital extends javax.swing.JFrame {
     }
 
     public FormSpdigital(Usuario usuarioLogIn) {
+        instancias.add(this);
         this.usuarioLogIn = usuarioLogIn;
         initComponents();
         setOpcionesRol();
@@ -200,7 +203,12 @@ public class FormSpdigital extends javax.swing.JFrame {
         }
     }
 
-    
+    public void cerrarInstanciasForm(){
+        for (FormSpdigital instancia : instancias) {
+            instancia.dispose();
+            
+        }
+    }
     public void cargarTabla() {
         try {
             
@@ -492,7 +500,7 @@ public class FormSpdigital extends javax.swing.JFrame {
             }
         });
 
-        lbSeleccionTabla1.setText("(seleccione un artículo del menú para su modificación/eliminación)");
+        lbSeleccionTabla1.setText("(seleccione un artículo del menú para modificar o eliminar)");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -815,10 +823,13 @@ public class FormSpdigital extends javax.swing.JFrame {
         
         FormLogIn fl = new FormLogIn();
         fl.setVisible(true);
+        AdministradorVentanas.cerrarForms();
         this.dispose();
+        
     }//GEN-LAST:event_BtnCerrarSesionActionPerformed
     
     private void MiGestionUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MiGestionUsuariosActionPerformed
+        
         FormGestionUsuarios fgu = new FormGestionUsuarios();
         fgu.setVisible(true);
     }//GEN-LAST:event_MiGestionUsuariosActionPerformed

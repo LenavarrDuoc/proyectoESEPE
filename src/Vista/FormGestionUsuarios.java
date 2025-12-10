@@ -4,24 +4,86 @@
  */
 package Vista;
 
+import Controlador.AdministradorVentanas;
 import Controlador.DaoRegistroUsuarios;
 import Modelo.Usuario;
+import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import java.text.Normalizer;
+import java.util.ArrayList;
 
 /**
  *
  * @author Leo_b
  */
 public class FormGestionUsuarios extends javax.swing.JFrame {
-
+    private static List<FormGestionUsuarios> instancias = new ArrayList<>();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormGestionUsuarios.class.getName());
+    
 
     /**
      * Creates new form FormGestionUsuarios
      */
     public FormGestionUsuarios() {
-        // TblUsuarios.setDefaultEditor(Object.class, null);
+        instancias.add(this);
         initComponents();
+        AdministradorVentanas.registrarForm(this);
+        TblUsuarios.setDefaultEditor(Object.class, null);
+        BtnModificarUsuario.setEnabled(false);
+        BtnEliminarUsuario.setEnabled(false);
+        cargarTabla();
+    }
+
+    public void cerrarInstanciasForm(){
+        for (FormGestionUsuarios instancia : instancias) {
+            instancia.dispose();
+            
+        }
+    }
+    private void cargarTabla() {
+        try {
+            List<Usuario> listado = new DaoRegistroUsuarios().listarUsuarios();
+            DefaultTableModel dtm = new DefaultTableModel();
+
+            dtm.addColumn("ID");
+            dtm.addColumn("Usuario");
+            dtm.addColumn("Rol");
+            dtm.addColumn("Fecha de registro");
+
+            for (Usuario u : listado) {
+                String[] filas = new String[4];
+                filas[0] = String.valueOf(u.getId());
+                filas[1] = u.getNombre();
+                filas[2] = u.getRol();
+                filas[3] = u.getFec_reg();
+
+                dtm.addRow(filas);
+
+            }
+            TblUsuarios.setModel(dtm);
+            limpiarCampos();
+            actualizarSiguienteID();
+        } catch (Exception e) {
+            String errorMessage = "Error al cargar tabla de usuarios";
+            System.out.println("FormGestionUsuarios - " + errorMessage);
+        }
+    }
+
+    public void actualizarSiguienteID() {
+        try {
+            int nextID = new DaoRegistroUsuarios().retornarultimoID() + 1;
+            LbID.setText(String.valueOf(nextID));
+        } catch (Exception e) {
+        }
+
+    }
+
+    public void limpiarCampos() {
+        TfNombre.setText("");
+        PfPass.setText("");
+        CbRol.setSelectedIndex(0);
+        PfPassCheck.setText("");
     }
 
     /**
@@ -49,6 +111,9 @@ public class FormGestionUsuarios extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        LbID = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        LbIDSelected = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -64,6 +129,11 @@ public class FormGestionUsuarios extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        TblUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TblUsuariosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(TblUsuarios);
 
         jLabel1.setText("Nombre:");
@@ -90,9 +160,15 @@ public class FormGestionUsuarios extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel5.setText("Gestión de usuarios:");
 
-        jLabel6.setText("Agregue o edite los siguientes campos:");
+        jLabel6.setText("Sig. ID: ");
 
-        jLabel7.setText("(Seleccione usuario de la lista para modificar o eliminar)");
+        jLabel7.setText("(Seleccione usuario de la lista para modificar/eliminar)");
+
+        LbID.setText("Desconocido");
+
+        jLabel8.setText("ID Seleccionado: ");
+
+        LbIDSelected.setText("sin seleccionar");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -102,29 +178,36 @@ public class FormGestionUsuarios extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGap(58, 58, 58))
+                            .addGap(113, 113, 113))
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(PfPass)
                         .addComponent(CbRol, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(TfNombre)
-                        .addComponent(PfPassCheck))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(BtnAgregarUsuario)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(BtnModificarUsuario))
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(PfPassCheck)
+                        .addComponent(jLabel5)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel6)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(LbID, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(BtnAgregarUsuario))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(BtnEliminarUsuario)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(BtnModificarUsuario)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(LbIDSelected, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(55, 55, 55)
+                        .addComponent(BtnEliminarUsuario)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -135,7 +218,9 @@ public class FormGestionUsuarios extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel6)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(LbID))
                         .addGap(14, 14, 14)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -153,15 +238,19 @@ public class FormGestionUsuarios extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(PfPassCheck, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(BtnAgregarUsuario)
                         .addComponent(BtnModificarUsuario))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(BtnEliminarUsuario)
-                        .addComponent(jLabel7)))
-                .addContainerGap(11, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel8)
+                            .addComponent(LbIDSelected))))
+                .addContainerGap())
         );
 
         pack();
@@ -169,11 +258,70 @@ public class FormGestionUsuarios extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BtnModificarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnModificarUsuarioActionPerformed
-        // TODO add your handling code here:
+        //Capturar:
+        int id = Integer.parseInt(LbIDSelected.getText());
+        String nombreCaptura = TfNombre.getText().replaceAll("\\p{M}", "").trim();
+        nombreCaptura = Normalizer.normalize(nombreCaptura, Normalizer.Form.NFD);
+        String nombre = nombreCaptura.substring(0, 1).toUpperCase() + nombreCaptura.substring(1).toLowerCase();
+        String rol = CbRol.getSelectedItem().toString().trim().toUpperCase();
+        String pass = PfPass.getText().trim();
+        String passCheck = PfPassCheck.getText();
+
+        if (nombre.length() < 2 || nombre.length() > 20) {
+            String errorMessage = "Debe agregar un nombre válido. Largo mín: 2 | máx: 20";
+            System.out.println(errorMessage);
+            JOptionPane.showMessageDialog(null, errorMessage, "Error", 0);
+        } else if (rol.equalsIgnoreCase("seleccione")) {
+            String errorMessage = "Debe seleccionar un rol de usuario";
+            System.out.println(errorMessage);
+            JOptionPane.showMessageDialog(null, errorMessage, "Error", 0);
+        } else if (pass.length() < 8 || pass.length() > 12 || !pass.matches(".*[a-z].*") || !pass.matches(".*[A-Z].*") || !pass.matches(".*\\d.*") || !pass.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=?¿¡!.,;:]).{6,}$")) {
+            String errorMessage = "La contraseña debe cumplir:\n*Largo = mín: 8 | máx: 12\n*Al menos 1 minúscula\n*Al menos 1 mayúscula\n*Al menos 1 caracter especial";
+            System.out.println(errorMessage);
+            JOptionPane.showMessageDialog(null, errorMessage, "Error", 0);
+        } else if (!pass.equals(passCheck)) {
+            String errorMessage = "La contraseña debe coincidir en ambos campos.";
+            System.out.println(errorMessage);
+            JOptionPane.showMessageDialog(null, errorMessage, "Error", 0);
+        } else {
+            try {
+                Usuario um = new Usuario(nombre, pass, rol, id);
+                DaoRegistroUsuarios dru = new DaoRegistroUsuarios();
+                if (dru.modificarUsuario(um)) {
+                    String resultMessage = "Usuario " + um.getNombre() + " modificado exitósamente en sistema.";
+                    System.out.println("FormGestionUsuarios:" + resultMessage);
+                    JOptionPane.showMessageDialog(null, resultMessage, "Modificación de usuario", JOptionPane.INFORMATION_MESSAGE);
+                    cargarTabla();
+
+                }
+            } catch (Exception e) {
+                String errorMessage = "Error al intentar modificar usuario en sistema.";
+                System.out.println("FormGestionUsuarios:" + errorMessage);
+                JOptionPane.showMessageDialog(null, errorMessage, "Error", 0);
+            }
+        }
     }//GEN-LAST:event_BtnModificarUsuarioActionPerformed
 
     private void BtnEliminarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnEliminarUsuarioActionPerformed
-        // TODO add your handling code here:
+        //Captura:
+        if (TblUsuarios.getSelectedRowCount() == 1) {
+            int id = Integer.parseInt(LbIDSelected.getText());
+            try {
+                DaoRegistroUsuarios dru = new DaoRegistroUsuarios();
+                if (dru.eliminarUsuario(id)) {
+                    String resultMessage = "Usuario ID:" + id + " eliminado exitósamente del sistema.";
+                    System.out.println("FormGestionUsuarios:" + resultMessage);
+                    JOptionPane.showMessageDialog(null, resultMessage, "Eliminación de usuario", JOptionPane.INFORMATION_MESSAGE);
+                    cargarTabla();
+                }
+
+            } catch (Exception e) {
+                String errorMessage = "Error al intentar eliminar usuario el sistema.";
+                System.out.println("FormGestionUsuarios:" + errorMessage);
+                JOptionPane.showMessageDialog(null, errorMessage, "Error", 0);
+            }
+
+        }
     }//GEN-LAST:event_BtnEliminarUsuarioActionPerformed
 
     private void PfPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PfPassActionPerformed
@@ -182,7 +330,9 @@ public class FormGestionUsuarios extends javax.swing.JFrame {
 
     private void BtnAgregarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAgregarUsuarioActionPerformed
         //Capturar:
-        String nombre = TfNombre.getText().trim().toLowerCase();
+        String nombreCaptura = TfNombre.getText().replaceAll("\\p{M}", "").trim();
+        nombreCaptura = Normalizer.normalize(nombreCaptura, Normalizer.Form.NFD);
+        String nombre = nombreCaptura.substring(0, 1).toUpperCase() + nombreCaptura.substring(1).toLowerCase();
         String rol = CbRol.getSelectedItem().toString().trim().toUpperCase();
         String pass = PfPass.getText().trim();
         String passCheck = PfPassCheck.getText();
@@ -211,6 +361,7 @@ public class FormGestionUsuarios extends javax.swing.JFrame {
                     String resultMessage = "Usuario " + u.getNombre() + " agregado exitósamente en sistema.";
                     System.out.println("FormGestionUsuarios:" + resultMessage);
                     JOptionPane.showMessageDialog(null, resultMessage, "Registro de nuevo usuario", JOptionPane.INFORMATION_MESSAGE);
+                    cargarTabla();
 
                 }
             } catch (Exception e) {
@@ -220,6 +371,20 @@ public class FormGestionUsuarios extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_BtnAgregarUsuarioActionPerformed
+
+    private void TblUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblUsuariosMouseClicked
+        //Captura:
+        if (TblUsuarios.getSelectedRowCount() == 1){
+            int row = TblUsuarios.getSelectedRow();
+            LbIDSelected.setText(TblUsuarios.getValueAt(row, 0).toString());
+            TfNombre.setText(String.valueOf(TblUsuarios.getValueAt(row, 1)));
+            String rol = TblUsuarios.getValueAt(row, 2).toString();
+            rol = rol.substring(0,1).toUpperCase() + rol.substring(1).toLowerCase();
+            CbRol.setSelectedItem(rol);
+            BtnModificarUsuario.setEnabled(true);
+            BtnEliminarUsuario.setEnabled(true);
+        }
+    }//GEN-LAST:event_TblUsuariosMouseClicked
 
     /**
      * @param args the command line arguments
@@ -251,6 +416,8 @@ public class FormGestionUsuarios extends javax.swing.JFrame {
     private javax.swing.JButton BtnEliminarUsuario;
     private javax.swing.JButton BtnModificarUsuario;
     private javax.swing.JComboBox<String> CbRol;
+    private javax.swing.JLabel LbID;
+    private javax.swing.JLabel LbIDSelected;
     private javax.swing.JPasswordField PfPass;
     private javax.swing.JPasswordField PfPassCheck;
     private javax.swing.JTable TblUsuarios;
@@ -262,6 +429,7 @@ public class FormGestionUsuarios extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

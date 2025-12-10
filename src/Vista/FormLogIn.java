@@ -136,6 +136,7 @@ public class FormLogIn extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
+        
         String user = tfUsuario.getText();
         String pass = pfClaveUsuario.getText();
         DaoRegistroUsuarios dru = new DaoRegistroUsuarios();

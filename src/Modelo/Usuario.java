@@ -13,6 +13,8 @@ public class Usuario {
     private String nombre;
     private String pass;
     private String rol;
+    private String fec_reg;
+
     
     //Constr;
         //SP:
@@ -21,10 +23,11 @@ public class Usuario {
     }
     
         //CPVerificación:
-    public Usuario(int id, String nombre, String rol) {
+    public Usuario(int id, String nombre, String rol, String fec_reg) {
         this.id = id;
         this.nombre = nombre;
         this.rol = rol;
+        this.fec_reg = fec_reg;
     }
     
         //CpRegistro:
@@ -34,15 +37,22 @@ public class Usuario {
         this.rol = rol;
     }
     
-        //CPAll:
-    public Usuario(int id, String nombre, String pass, String rol) {
+        //CpModificacion:
+    public Usuario(String nombre, String pass, String rol, int id) {
         this.id = id;
         this.nombre = nombre;
         this.pass = pass;
         this.rol = rol;
     }
-
-
+    
+        //CPAll:
+    public Usuario(int id, String nombre, String pass, String rol, String fec_reg) {
+        this.id = id;
+        this.nombre = nombre;
+        this.pass = pass;
+        this.rol = rol;
+        this.fec_reg =  fec_reg;
+    }
     
     //G&S:
 
@@ -77,6 +87,15 @@ public class Usuario {
     public void setRol(String rol) {
         this.rol = rol;
     }
+
+    public String getFec_reg() {
+        return fec_reg;
+    }
+
+    public void setFec_reg(String fec_reg) {
+        this.fec_reg = fec_reg;
+    }
+    
     
     //ToStr:
 
